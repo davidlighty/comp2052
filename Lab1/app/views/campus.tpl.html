@@ -1,0 +1,20 @@
+<!-- Campus Map Details -->
+<div class="campus-map-details ui-grid-a ui-responsive" data-ng-show="currentCampus">
+    <h4>Selected Campus:</h4>
+    <div class="vcard ui-block-a">
+        <h4 class="org"><a href="{{currentCampus.web}}">{{currentCampus.title}}</a></h4>
+        <div class="adr">
+            <div class="street-address">{{currentCampus.address.street}}</div>
+            <span class="locality">{{currentCampus.address.city}}</span>,
+            <span class="region">{{currentCampus.address.prov}}</span>,
+            <span class="postal-code">{{currentCampus.address.postalcode}}</span>
+        </div>
+        <div>
+            <a href="{{currentCampus.web}}">Campus Website</a>
+        </div>
+    </div>
+    <div class="ui-block-b ui-mini">
+        <h5>JSON Data</h5>
+        {{item}}
+    </div>
+</div>

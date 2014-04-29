@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html data-ng-app="campusApp">
+    <head>
+        <title>BCIT Campuses</title>
+        <!--
+                    COMP 2920 - Assingment 1
+                        David Lighty A00843511
+                    Create a simple interactive Map site
+        -->
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <!-- jQuery Mobile CDN Resources -->
+        <!-- jQuery Mobile was used to create the UI layout for responsiveness and mobile support.  All data related duties
+        are handled with AngularJS. -->
+        <link rel="stylesheet" href="styles/jquery.mobile.flatui.css" />
+        <link rel="stylesheet" href="styles/main.css"/>
+        <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+        <!-- http://demos.jquerymobile.com/1.3.2/ -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.2/jquery.mobile.min.js"></script>
+        <!-- Why Angular over jQM?  In my experience there is a richer programatic advantage to not writing dom code
+                        inside javascript.  Have the javascript manipulate your data, but have all the dom code already created
+                        and maintained in template files/structure.  This allows a cleaner seperatation of duties.  I find that
+        AngularJS does this very well with it's two-way data-binding approach.  (The other is Meteor.) -->
+        <!-- AngularJS https://angularjs.org/ -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.7/angular.js"></script>
+        <!-- Google Maps Angular  -->
+        <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+        <script src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js'></script>
+        <script src='app/lib/angular-google-maps.min.js'></script>
+        <!-- Main App Script -->
+        <script src="app/campusApp.js"></script>
+        <script src="app/campusAppServices.js"></script>
+    </head>
+    <body>
+        <!-- Main Site Content Wrapper -->
+        <div class="site-wrapper" data-role="page">
+            <!-- Header Object -->
+            <div data-ng-include="'app/views/header.tpl.html'" data-role="header"></div>
+            <!-- Main Content Section -->
+            <section class="site-content" data-ng-controller="campusAppCtrl" data-role="content" role="main">
+                <!-- Campus Selection Tool -->
+                <div class="campus-selector-section">
+                    <select data-ng-model="item" data-ng-change="showCampus()" data-ng-options="campus as campus.campus.title for campus in campuses">
+                        <option selected>Select a campus:</option>
+                    </select>
+                </div>
+                                <!-- Campus Map Display -->
+                <div class="campus-map-section">
+                    <google-map center="map.center" zoom="map.zoom">
+                    <marker ng-repeat="m in map.markers" coords="m" icon="m.icon">
+                    </marker>
+                    </google-map>
+                </div>
+                <div data-ng-include="'app/views/campus.tpl.html'"></div>
+        </section>
+        <!-- Footer Information -->
+        <div data-ng-include="'app/views/footer.tpl.html'" data-role="footer"></div>
+    </div>
+</body>
+</html>
