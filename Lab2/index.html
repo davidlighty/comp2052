@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html data-ng-app="studentApp">
+    <head>
+        <title>Student Admin Data App</title>
+        <!--
+        COMP 2920 - Assingment 2
+            David Lighty A00843511
+        Create a Client/Server App with Graphics
+        -->
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <!-- jQuery Mobile CDN Resources -->
+        <!-- jQuery Mobile was used to create the UI layout for responsiveness and mobile support.  All data related duties
+        are handled with AngularJS. -->
+        <link rel="stylesheet" href="styles/jquery.mobile.flatui.css" />
+        <link rel="stylesheet" href="styles/main.css"/>
+        <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+        <!-- http://demos.jquerymobile.com/1.3.2/ -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.2/jquery.mobile.min.js"></script>
+        <!-- AngularJS https://angularjs.org/ -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.7/angular.js"></script>
+        <!-- Google Maps Angular  -->
+        <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+        <script src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js'></script>
+        <!-- Angular Lib Includes -->
+        <script src='app/lib/angular-google-maps.min.js'></script>
+        <script src='//code.highcharts.com/highcharts.js'></script>
+        <script src='app/lib/highcharts-ng.js'></script>
+        <!-- Student App Script -->
+        <script src="app/studentApp.js"></script>
+        <script src="app/campusAppCtrl.js"></script>
+        <script src="app/studentAppServices.js"></script>
+    </head>
+    <body>
+        <!-- Main Site Content Wrapper -->
+        <div class="site-wrapper" data-role="page">
+            <div id="aboutPanel" data-role="panel" data-position="left" data-display="overlay">
+                <article>
+                <h1>About</h1>
+                <div>
+                    <h3>Author: David Lighty</h3>
+                    <ul>
+                        <li><p>Web Developer</p></li>
+                        <li><p>BCIT Student</p></li>
+                    </ul>
+                </div>
+                <div>
+                    <ul >
+                        <li>AngularJS Driven App</li>
+                        <li>jQuery Mobile UI/UX Framework</li>
+                        <li>PHP API Based backend (/server)</li>
+                        <li>REST limited to GET/POST only</li>
+                        <li><h5>Features</h5>
+                            <ul>
+                                <li>Show Students</li>
+                                <li>Add Students</li>
+                                <li>Query/Sort Students</li>
+                                <li>Gender Pie Chart</li>
+                                <li>Students at Campus Chart</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <button data-rel="close">Thanks.</button>
+                </div>
+                </article>
+            </div>
+            <!-- Header Object -->
+            <div data-ng-include="'app/views/header.tpl.html'" data-role="header"></div>
+            <!-- Main Content Section -->
+            <div data-role="content">
+                <div data-role="collapsibleset" data-content-theme="b" data-ng-controller="studentAppCtrl">
+                    <!-- Collapisble Accordian for each required "view" -->
+                    <section data-role="collapsible" data-theme="d">
+                        <h1>Student Admin View</h1>
+                        <p>Show some overall student stats with graphics</p>
+                        <div>
+                            <ul class="ui-mini">
+                                <li>Total Students:{{totalStudents}}</li>
+                                <li>Total Males: {{totalMales}}</li>
+                                <li>Females: {{totalFemales}}</li>
+                                <li>Not set: {{noGender}}</li>
+                            </ul>
+                            <div>
+                                <highchart id="studentGenderChart" config="genderPieConfig" class="pie-chart" ></highchart>
+                            </div>
+                            <div>
+                                <button data-ng-click="SeedData()">Seed Database</button>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-role="collapsible" data-theme="d">
+                        <h1>Campus Admin View</h1>
+                        <p>Show some overall Campus stats with graphics</p>
+                        <div>
+                            <highchart id="campusStudentChart" config="campusPieConfig" class="pie-chart" ></highchart>
+                        </div>
+                    </section>
+                    <section data-role="collapsible">
+                        <h1>Student Viewer</h1>
+                        <p>Allow the admin to select and view a student</p>
+                        <!-- Student Query and View Template -->
+                        <div class="student-selector-section ui-grid-a ui-responsive">
+                            <div class="student-selection ui-block-a">
+                                <ul>
+                                    <li><h2>Find</h2></li>
+                                    <li><input type="text" id="studentInput" data-ng-model="studentSearch" placeholder="Search..." /></li>
+                                    <li> <p class="ui-mini">Query any part of the student data obj.</p></li>
+                                    <li><h4>Sort</h4></li>
+                                    <li>
+                                        <fieldset data-role="controlgroup" data-type="horizontal" >
+                                            <label for="orderByLast">Last</label>
+                                            <input type="radio" value="lastName" id="orderByLast" name="orderBy" checked data-ng-click="studentSort='lastName'"/>
+                                            <label for="orderByID">ID</label>
+                                            <input type="radio" value="id" id="orderByID" name="orderBy" data-ng-click="studentSort='id'"/>
+                                            <label for="orderByCampus">Campus</label>
+                                            <input type="radio" value="campus" id="orderByCampus" name="orderBy" data-ng-click="studentSort='defaultCampus'"/>
+                                        </fieldset>
+                                    </li>
+                                </ul>
+                                <div class="student-views">
+                                    <span>Displaying:{{(students|filter:studentSearch).length}}</span>
+                                    <ul>
+                                        <!-- Show each found student from filter of input -->
+                                        <li data-ng-repeat="student in students | filter:studentSearch | orderBy:studentSort">
+                                            <section class="student-item">
+                                                <h3>{{student.firstName}} {{student.lastName}}</h3><span class="label-student-id">{{student.id}}</span>
+                                                <span class="label-student-id">{{campusTitle(student.defaultCampus)}}</span>
+                                            </section>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="student-add ui-block-b">
+                                <ul>
+                                    <li><h2>Add Student</h2></li>
+                                    <li><input type="text" id="studentID" placeholder="ID" data-ng-model="newStudent.id" /></li>
+                                    <li><input type="text" id="firstName" placeholder="First Name" data-ng-model="newStudent.firstName"  /></li>
+                                    <li><input type="text" id="lastName" placeholder="Last Name" data-ng-model="newStudent.lastName" /></li>
+                                    <li>
+                                        <h4>Gender</h4>
+                                        <fieldset data-role="controlgroup" data-type="horizontal" >
+                                            <label for="male">M</label>
+                                            <input type="radio" value="M" id="male" name="gender" data-ng-model="newStudent.gender" />
+                                            <label for="female">F</label>
+                                            <input type="radio" value="F" id="female" name="gender" data-ng-model="newStudent.gender" />
+                                        </fieldset>
+                                    </li>
+                                    <li><button id="addStudent" data-ng-click="AddStudent()">Add</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="site-content section-map" id="campusMap" data-ng-controller="campusAppCtrl" data-role="collapsible">
+                        <h1>Campus Viewer</h1>
+                        <p>Allow the admin to select and view a campus.</p>
+                        <!-- Campus Selection Tool -->
+                        <div class="campus-selector-section">
+                            <select data-ng-model="item" data-ng-change="showCampus()" data-ng-options="campus as campus.campus.title for campus in campuses">
+                                <option selected>Select a campus:</option>
+                            </select>
+                        </div>
+                        Campus Map Display
+                        <div class="campus-map-section">
+                            <google-map center="map.center" zoom="map.zoom" control="map.control">
+                            <marker ng-repeat="m in map.markers" coords="m" icon="m.icon">
+                            </marker>
+                            </google-map>
+                        </div>
+                        <div data-ng-include="'app/views/campus.tpl.html'"></div>
+                    </section>
+                    <section id="app-dev-notes" data-role="collapsible" data-collapsed="false">
+                        <h1>Dev Notes</h1>
+                        <div class="ui-grid-a">
+                            <ol class="ui-block-b">
+                                <h4>Notes/Issues</h4>
+                                <li data-ng-repeat="note in notes">
+                                    <p>{{note.text}}</p>
+                                    <p>By: {{note.author}}</p>
+                                </li>
+                            </ol>
+                            <button id="btnAboutPnl">About</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <!-- Footer Information -->
+            <div data-ng-include="'app/views/footer.tpl.html'" data-role="footer"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,29 @@
+ul{
+	list-style-type: none;
+	padding:2px;
+}
+h4{
+	margin:0;
+}
+.student-item{
+	font-style: italic;
+	clear:both;
+}
+.student-item h3,.student-item span{
+	float:left;
+	display: inline-block;
+	margin: 4px;
+}
+.student-item h3{
+	width:31%;
+}
+.student-item span{
+	font-size: 92%;
+}
+
+.angular-google-map-container {
+    width: 98%;
+    height: 300px;
+    margin: 0 auto;
+}
+                                                               

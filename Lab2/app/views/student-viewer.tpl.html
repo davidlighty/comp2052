@@ -1,0 +1,31 @@
+<!-- Student Query and View Template -->
+<div class="student-selector-section ui-grid-a ui-responsive">
+    <div class="student-selection ui-block-a">
+        Query for student: <input type="text" id="studentInput" data-ng-model="studentSearch" />
+    </div>
+    <div class="student-add ui-block-b">
+    <h3>Add Student</h3>
+    	<ul>
+    	<li><input type="text" id="firstName" placeholder="First Name" /></li>
+        <li><input type="text" id="lastName" placeholder="Last Name" /></li>
+        <li>
+        	<!-- Gender -->
+        </li>
+        <li><button id="addStudent">Add</button></li>
+    </div>
+</div>
+<div class="student-views">
+    <span>Found:{{students.length}}</span>
+    <ul>
+        <!-- Show each found student from filter of input -->
+        <li data-ng-repeat="student in students | filter:studentSearch">
+            <section class="student-item">
+                <h2>{{student.firstName}} {{student.lastName}}</h2>
+                <div class="ui-mini">
+                    <!-- JSON Data -->
+                    {{student}}
+                </div>
+            </section>
+        </li>
+    </ul>
+</div>

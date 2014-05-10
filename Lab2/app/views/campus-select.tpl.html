@@ -1,0 +1,14 @@
+<!-- Campus Selection Template -->
+<div class="campus-selector-section">
+    <select data-ng-model="item" data-ng-change="showCampus()" data-ng-options="campus as campus.campus.title for campus in campuses">
+        <option selected>Select a campus:</option>
+    </select>
+</div>
+Campus Map Display
+<div class="campus-map-section">
+    <google-map center="map.center" zoom="map.zoom">
+    <marker ng-repeat="m in map.markers" coords="m" icon="m.icon">
+    </marker>
+    </google-map>
+</div>
+<div data-ng-include="'app/views/campus.tpl.html'"></div>
